@@ -24,7 +24,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 /**
  * A semi-persistent mapping from keys to values. Values are automatically loaded by the cache,
  * and are stored in the cache until either evicted or manually invalidated.
- * 自动加载填充的缓存接口，从键到值的半持久映射。值由缓存自动加载，并存储在缓存中，直到被逐出或手动无效。
+ * 自动加载的缓存接口，从键到值的半持久映射。值由缓存自动加载，并存储在缓存中，直到被逐出或手动无效。
  * <p>
  * Implementations of this interface are expected to be thread-safe, and can be safely accessed
  * by multiple concurrent threads.

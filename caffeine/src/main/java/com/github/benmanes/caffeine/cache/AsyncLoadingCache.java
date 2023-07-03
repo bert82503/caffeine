@@ -21,15 +21,20 @@ import java.util.concurrent.CompletableFuture;
 /**
  * A semi-persistent mapping from keys to values. Values are automatically loaded by the cache
  * asynchronously, and are stored in the cache until either evicted or manually invalidated.
+ * 异步自动加载的缓存接口，从键到值的半持久映射。
+ * 值由缓存异步自动加载，并存储在缓存中，直到被收回或手动无效。
  * <p>
  * Implementations of this interface are expected to be thread-safe, and can be safely accessed
  * by multiple concurrent threads.
+ * 该接口的实现应该是线程安全的，并且可以由多个并发线程安全地访问。
  *
  * @author ben.manes@gmail.com (Ben Manes)
  * @param <K> the type of keys maintained by this cache
  * @param <V> the type of mapped values
  */
 public interface AsyncLoadingCache<K, V> extends AsyncCache<K, V> {
+
+  // 查询操作
 
   /**
    * Returns the future associated with {@code key} in this cache, obtaining that value from
@@ -82,6 +87,10 @@ public interface AsyncLoadingCache<K, V> extends AsyncCache<K, V> {
    * mapping is not present if the value is currently being loaded. Modifications made to the
    * synchronous cache directly affect the asynchronous cache. If a modification is made to a
    * mapping that is currently loading, the operation blocks until the computation completes.
+   * 返回作为同步{@link LoadingCache}存储在此缓存中的条目的视图。
+   * 如果当前正在加载值，则映射不存在。
+   * 对同步缓存所做的修改会直接影响异步缓存。
+   * 如果对当前正在加载的映射进行了修改，则操作将阻塞，直到计算完成。
    *
    * @return a thread-safe synchronous view of this cache
    */

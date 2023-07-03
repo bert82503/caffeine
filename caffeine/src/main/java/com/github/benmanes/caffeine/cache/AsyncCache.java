@@ -200,6 +200,9 @@ public interface AsyncCache<K, V> {
    * directly affect the asynchronous cache. If a modification is made to a mapping that is
    * currently loading, the operation blocks until the computation completes.
    * 返回作为同步缓存存储在此缓存中的条目的视图。
+   * 如果当前正在加载值，则映射不存在。
+   * 对同步缓存所做的修改会直接影响异步缓存。
+   * 如果对当前正在加载的映射进行了修改，则操作将阻塞，直到计算完成。
    *
    * @return a thread-safe synchronous view of this cache
    */
