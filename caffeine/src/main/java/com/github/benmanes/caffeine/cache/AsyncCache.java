@@ -29,15 +29,20 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * A semi-persistent mapping from keys to values. Cache entries are manually added using
  * {@link #get(Object, Function)} or {@link #put(Object, CompletableFuture)}, and are stored in the
  * cache until either evicted or manually invalidated.
+ * 异步缓存接口，从键到值的半持久映射。
+ * 缓存条目使用{@link #get(Object, Function)}或{@link #put(Object, CompletableFuture)}手动添加，并存储在缓存中，直到被逐出或手动无效。
  * <p>
  * Implementations of this interface are expected to be thread-safe, and can be safely accessed by
  * multiple concurrent threads.
+ * 该接口的实现应该是线程安全的，并且可以由多个并发线程安全地访问。
  *
  * @author ben.manes@gmail.com (Ben Manes)
  * @param <K> the type of keys maintained by this cache
  * @param <V> the type of mapped values
  */
 public interface AsyncCache<K, V> {
+
+  // 查询操作
 
   /**
    * Returns the future associated with {@code key} in this cache, or {@code null} if there is no
@@ -154,6 +159,8 @@ public interface AsyncCache<K, V> {
       BiFunction<? super Set<? extends K>, ? super Executor,
           ? extends CompletableFuture<? extends Map<? extends K, ? extends V>>> mappingFunction);
 
+  // 插入操作
+
   /**
    * Associates {@code value} with {@code key} in this cache. If the cache previously contained a
    * value associated with {@code key}, the old value is replaced by {@code value}. If the
@@ -167,6 +174,8 @@ public interface AsyncCache<K, V> {
    * @throws NullPointerException if the specified key or value is null
    */
   void put(K key, CompletableFuture<? extends V> valueFuture);
+
+  // 并发映射表，视图转换
 
   /**
    * Returns a view of the entries stored in this cache as a thread-safe map. Modifications made to
@@ -190,6 +199,7 @@ public interface AsyncCache<K, V> {
    * not present if the value is currently being loaded. Modifications made to the synchronous cache
    * directly affect the asynchronous cache. If a modification is made to a mapping that is
    * currently loading, the operation blocks until the computation completes.
+   * 返回作为同步缓存存储在此缓存中的条目的视图。
    *
    * @return a thread-safe synchronous view of this cache
    */
