@@ -37,6 +37,8 @@ import org.checkerframework.checker.nullness.qual.PolyNull;
  * An access point for inspecting and performing low-level operations based on the cache's runtime
  * characteristics. These operations are optional and dependent on how the cache was constructed
  * and what abilities the implementation exposes.
+ * 一种访问点，用于根据缓存的运行时特性检查和执行低级操作。
+ * 这些操作是可选的，取决于缓存是如何构建的以及实现公开了什么功能。
  *
  * @author ben.manes@gmail.com (Ben Manes)
  */
@@ -44,6 +46,7 @@ public interface Policy<K, V> {
 
   /**
    * Returns whether the cache statistics are being accumulated.
+   * 返回是否正在累积缓存统计信息。
    *
    * @return if cache statistics are being recorded
    */
@@ -54,6 +57,9 @@ public interface Policy<K, V> {
    * cached value for the {@code key}. Unlike {@link Cache#getIfPresent(Object)}, this method does
    * not produce any side effects such as updating statistics, the eviction policy, resetting the
    * expiration time, or triggering a refresh.
+   * 返回与此缓存中的键关联的值，如果没有该键的缓存值，则返回null。
+   * 与{@link Cache#getIfPresent(Object)}不同，此方法不会产生任何副作用，
+   * 例如更新性能统计信息、驱逐策略、重置过期时间、触发刷新。
    *
    * @param key the key whose associated value is to be returned
    * @return the value to which the specified key is mapped, or {@code null} if this cache contains
@@ -82,6 +88,7 @@ public interface Policy<K, V> {
 
   /**
    * Returns an unmodifiable snapshot {@link Map} view of the in-flight refresh operations.
+   * 返回飞行中刷新操作的不可修改的快照Map视图。
    *
    * @return a snapshot view of the in-flight refresh operations
    */
@@ -91,10 +98,14 @@ public interface Policy<K, V> {
    * Returns access to perform operations based on the maximum size or maximum weight eviction
    * policy. If the cache was not constructed with a size-based bound or the implementation does
    * not support these operations, an empty {@link Optional} is returned.
+   * 返回基于最大大小或最大权重驱逐策略执行操作的访问权限。
+   * 如果缓存不是用基于大小的绑定构造的，或者实现不支持这些操作，则返回空的Optional。
    *
    * @return access to low-level operations for this cache if an eviction policy is used
    */
   Optional<Eviction<K, V>> eviction();
+
+  // 过期
 
   /**
    * Returns access to perform operations based on the time-to-idle expiration policy. This policy
@@ -103,9 +114,14 @@ public interface Policy<K, V> {
    * access. Access time is reset by all cache read and write operations (including
    * {@code Cache.asMap().get(Object)} and {@code Cache.asMap().put(K, V)}), but not by operations
    * on the collection-views of {@link Cache#asMap}.
+   * 返回基于空闲时间过期策略执行操作的访问权限。
+   * 此策略确定，在条目创建、最近一次替换其值或最后一次访问后经过固定的持续时间后，应自动从缓存中删除条目。
+   * 访问时间由所有缓存读取和写入操作（包括Cache.asMap().get(Object)和Cache.asMap().put(K, V)）重置，
+   * 但不由{@link Cache#asMap}的集合视图上的操作重置。
    * <p>
    * If the cache was not constructed with access-based expiration or the implementation does not
    * support these operations, an empty {@link Optional} is returned.
+   * 如果缓存不是使用基于访问的过期构造的，或者实现不支持这些操作，则返回空的Optional。
    *
    * @return access to low-level operations for this cache if a time-to-idle expiration policy is
    *         used
@@ -116,9 +132,12 @@ public interface Policy<K, V> {
    * Returns access to perform operations based on the time-to-live expiration policy. This policy
    * determines that an entry should be automatically removed from the cache once a fixed duration
    * has elapsed after the entry's creation, or the most recent replacement of its value.
+   * 返回基于生存时间过期策略执行操作的访问权限。
+   * 此策略确定，在创建条目或最近替换其值后经过固定的持续时间后，应自动从缓存中删除条目。
    * <p>
    * If the cache was not constructed with write-based expiration or the implementation does not
    * support these operations, an empty {@link Optional} is returned.
+   * 如果缓存不是用基于写入的过期构造的，或者实现不支持这些操作，则返回空的Optional。
    *
    * @return access to low-level operations for this cache if a time-to-live expiration policy is
    *         used
@@ -129,6 +148,8 @@ public interface Policy<K, V> {
    * Returns access to perform operations based on the variable expiration policy. This policy
    * determines that an entry should be automatically removed from the cache once a per-entry
    * duration has elapsed.
+   * 返回基于变量过期策略执行操作的访问权限。
+   * 此策略确定在每个条目持续时间过后，应自动从缓存中删除条目。
    * <p>
    * If the cache was not constructed with variable expiration or the implementation does not
    * support these operations, an empty {@link Optional} is returned.
@@ -141,6 +162,8 @@ public interface Policy<K, V> {
    * Returns access to perform operations based on the time-to-live refresh policy. This policy
    * determines that an entry should be automatically reloaded once a fixed duration has elapsed
    * after the entry's creation, or the most recent replacement of its value.
+   * 返回根据实时刷新策略执行操作的访问权限。
+   * 此策略确定，在创建条目或最近一次替换其值后经过固定的持续时间后，应自动重新加载条目。
    * <p>
    * If the cache was not constructed with write-based refresh or the implementation does not
    * support these operations, an empty {@link Optional} is returned.
@@ -149,7 +172,9 @@ public interface Policy<K, V> {
    */
   Optional<FixedRefresh<K, V>> refreshAfterWrite();
 
-  /** The low-level operations for a cache with a size-based eviction policy. */
+  /**
+   * 具有基于大小的驱逐策略的缓存的低级操作。
+   * The low-level operations for a cache with a size-based eviction policy. */
   interface Eviction<K, V> {
 
     /**
@@ -200,6 +225,8 @@ public interface Policy<K, V> {
      * @throws IllegalArgumentException if the maximum size specified is negative
      */
     void setMaximum(@NonNegative long maximum);
+
+    // 冷、热数据链表
 
     /**
      * Returns an unmodifiable snapshot {@link Map} view of the cache with ordered traversal. The
@@ -332,7 +359,9 @@ public interface Policy<K, V> {
     }
   }
 
-  /** The low-level operations for a cache with a fixed expiration policy. */
+  /**
+   * 具有固定过期策略的缓存的低级操作。
+   * The low-level operations for a cache with a fixed expiration policy. */
   interface FixedExpiration<K, V> {
 
     /**
@@ -416,6 +445,8 @@ public interface Policy<K, V> {
     default void setExpiresAfter(Duration duration) {
       setExpiresAfter(saturatedToNanos(duration), TimeUnit.NANOSECONDS);
     }
+
+    // 旧、新数据链表
 
     /**
      * Returns an unmodifiable snapshot {@link Map} view of the cache with ordered traversal. The
@@ -504,7 +535,9 @@ public interface Policy<K, V> {
     }
   }
 
-  /** The low-level operations for a cache with a variable expiration policy. */
+  /**
+   * 具有可变过期策略的缓存的低级操作。
+   * The low-level operations for a cache with a variable expiration policy. */
   interface VarExpiration<K, V> {
 
     /**
@@ -745,7 +778,9 @@ public interface Policy<K, V> {
     }
   }
 
-  /** The low-level operations for a cache with a fixed refresh policy. */
+  /**
+   * 具有固定刷新策略的缓存的低级操作。
+   * The low-level operations for a cache with a fixed refresh policy. */
   interface FixedRefresh<K, V> {
 
     /**
@@ -836,12 +871,15 @@ public interface Policy<K, V> {
    * specified, this is a value-based class, it can be assumed that the implementation is an
    * immutable snapshot of the cached data at the time of this entry's creation, and it will not
    * reflect changes afterwards.
+   * 键值对，该键值对可以包括缓存条目的策略元数据。
+   * 除非另有说明，否则这是一个基于值的类，可以假设该实现是创建该条目时缓存数据的不可变快照，并且之后不会反映更改。
    */
   interface CacheEntry<K, V> extends Map.Entry<K, V> {
 
     /**
      * Returns the entry's weight. If the cache was not configured with a maximum weight then this
      * value is always {@code 1}.
+     * 返回条目的权重。
      *
      * @return the weight if the entry
      */
@@ -851,6 +889,7 @@ public interface Policy<K, V> {
      * Returns the {@link Ticker#read()} ticks for when this entry expires. If the cache was not
      * configured with an expiration policy then this value is roughly {@link Long#MAX_VALUE}
      * ticks away from the {@link #snapshotAt()} reading.
+     * 返回此条目过期时的时间源标记。
      *
      * @return the ticker reading for when the entry expires
      */
