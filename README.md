@@ -12,11 +12,15 @@
 Caffeine is a [high performance][benchmarks], [near optimal][efficiency] caching library. For more
 details, see our [user's guide][users-guide] and browse the [API docs][javadoc] for the latest
 release.
+Caffeine是一个高性能、近乎最佳的缓存库。
+有关更多详细信息，请参阅我们的用户指南并浏览最新版本的API文档。
 
-### Cache
+### Cache-缓存
 
 Caffeine provides an in-memory cache using a Google Guava inspired API. The improvements draw on our
 experience designing [Guava's cache][guava-cache] and [ConcurrentLinkedHashMap][clhm].
+Caffeine使用谷歌番石榴启发的API提供内存缓存。
+这些改进借鉴了我们设计Guava缓存和ConcurrentLinkedHashMap的经验。
 
 ```java
 LoadingCache<Key, Graph> graphs = Caffeine.newBuilder()
@@ -26,20 +30,30 @@ LoadingCache<Key, Graph> graphs = Caffeine.newBuilder()
     .build(key -> createExpensiveGraph(key));
 ```
 
-#### Features at a Glance
+#### Features at a Glance-功能一览
 
 Caffeine provides flexible construction to create a cache with a combination of the following
 optional features:
+Caffeine提供了灵活的结构，可结合以下可选功能创建缓存：
 
 * [automatic loading of entries][population] into the cache, optionally asynchronously
+  将条目自动加载到缓存中，可选异步加载
 * [size-based eviction][size] when a maximum is exceeded based on [frequency and recency][efficiency]
+  基于大小的驱逐机制，基于频率和最近度超过最大值时
 * [time-based expiration][time] of entries, measured since last access or last write
+  基于时间的过期时间，自上次访问或上次写入以来测量的条目
 * [asynchronously refresh][refresh] when the first stale request for an entry occurs
+  异步刷新，当出现对条目的第一个过时请求时
 * keys automatically wrapped in [weak references][reference]
+  键自动包装在弱引用中
 * values automatically wrapped in [weak or soft references][reference]
+  值自动包装在弱引用或软引用中
 * [notification][listener] of evicted (or otherwise removed) entries
+  驱逐条目的通知（或以其他方式删除）
 * [writes propagated][compute] to an external resource
+  传播到外部资源的写入
 * accumulation of cache access [statistics][statistics]
+  缓存访问统计信息的累积
 
 In addition, Caffeine offers the following extensions:
 
