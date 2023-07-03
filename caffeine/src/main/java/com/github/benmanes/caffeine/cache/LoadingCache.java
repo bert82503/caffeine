@@ -24,9 +24,11 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 /**
  * A semi-persistent mapping from keys to values. Values are automatically loaded by the cache,
  * and are stored in the cache until either evicted or manually invalidated.
+ * 自动加载填充的缓存接口，从键到值的半持久映射。值由缓存自动加载，并存储在缓存中，直到被逐出或手动无效。
  * <p>
  * Implementations of this interface are expected to be thread-safe, and can be safely accessed
  * by multiple concurrent threads.
+ * 该接口的实现应该是线程安全的，并且可以由多个并发线程安全地访问。
  *
  * @author ben.manes@gmail.com (Ben Manes)
  * @param <K> the type of keys maintained by this cache
@@ -34,13 +36,18 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
  */
 public interface LoadingCache<K, V> extends Cache<K, V> {
 
+  // 查询操作
+
   /**
    * Returns the value associated with the {@code key} in this cache, obtaining that value from
    * {@link CacheLoader#load(Object)} if necessary.
+   * 返回与此缓存中的键关联的值，必要时从{@link CacheLoader#load(Object)}获取该值。
    * <p>
    * If another call to {@link #get} is currently loading the value for the {@code key}, this thread
    * simply waits for that thread to finish and returns its loaded value. Note that multiple threads
    * can concurrently load values for distinct keys.
+   * 如果另一个对{@link #get}的调用当前正在加载键的值，则此线程只需等待该线程完成并返回其加载的值。
+   * 请注意，多个线程可以同时加载不同键的值。
    * <p>
    * If the specified key is not already associated with a value, attempts to compute its value and
    * enters it into this cache unless {@code null}. The entire method invocation is performed
@@ -88,19 +95,27 @@ public interface LoadingCache<K, V> extends Cache<K, V> {
    */
   Map<K, V> getAll(Iterable<? extends K> keys);
 
+  // 刷新策略
+
   /**
    * Loads a new value for the {@code key}, asynchronously. While the new value is loading the
    * previous value (if any) will continue to be returned by {@code get(key)} unless it is evicted.
    * If the new value is loaded successfully it will replace the previous value in the cache; if an
    * exception is thrown while refreshing the previous value will remain, <i>and the exception will
    * be logged (using {@link System.Logger}) and swallowed</i>.
+   * 异步加载键的新值。
+   * 当新值正在加载时，get(key)将继续返回以前的值（如果有），除非它被收回。
+   * 如果成功加载新值，它将替换缓存中的先前值；如果在刷新时引发异常，则会保留以前的值，并且会记录并吞下该异常。
    * <p>
    * Caches loaded by a {@link CacheLoader} will call {@link CacheLoader#reload} if the cache
    * currently contains a value for the {@code key}, and {@link CacheLoader#load} otherwise. Loading
    * is asynchronous by delegating to the default executor.
+   * 如果缓存当前包含键的值，则由{@link CacheLoader}加载的缓存将调用{@link CacheLoader#reload}，否则将调用{@link CacheLoader#load}。
+   * 通过委托给默认执行器，加载是异步的。
    * <p>
    * Returns an existing future without doing anything if another thread is currently loading the
    * value for {@code key}.
+   * 如果另一个线程当前正在加载键的值，则返回现有的异步计算任务，而不执行任何操作。
    *
    * @param key key with which a value may be associated
    * @return the future that is loading the value
@@ -116,6 +131,10 @@ public interface LoadingCache<K, V> extends Cache<K, V> {
    * exception is thrown while refreshing the previous value will remain, <i>and the exception will
    * be logged (using {@link System.Logger}) and swallowed</i>. If another thread is currently
    * loading the value for {@code key}, then does not perform an additional load.
+   * 异步地为每个键加载一个新值。
+   * 当新值正在加载时，get(key)将继续返回以前的值（如果有），除非它被收回。
+   * 如果成功加载新值，它将替换缓存中的先前值；如果在刷新时引发异常，则会保留以前的值，并且会记录并吞下该异常。
+   * 如果另一个线程当前正在加载键的值，则不执行额外的加载。
    * <p>
    * Caches loaded by a {@link CacheLoader} will call {@link CacheLoader#reload} if the cache
    * currently contains a value for the {@code key}, and {@link CacheLoader#load} otherwise. Loading
