@@ -26,8 +26,10 @@ import com.google.errorprone.annotations.Immutable;
 
 /**
  * Statistics about the performance of a {@link Cache}.
+ * 有关缓存性能的统计信息。
  * <p>
  * Cache statistics are incremented according to the following rules:
+ * 缓存统计信息将根据以下规则递增：
  * <ul>
  *   <li>When a cache lookup encounters an existing cache entry {@code hitCount} is incremented.
  *   <li>When a cache lookup first encounters a missing cache entry, a new entry is loaded.
@@ -64,12 +66,33 @@ import com.google.errorprone.annotations.Immutable;
 public final class CacheStats {
   private static final CacheStats EMPTY_STATS = CacheStats.of(0L, 0L, 0L, 0L, 0L, 0L, 0L);
 
+  /**
+   * 缓存命中计数器
+   */
   private final long hitCount;
+  /**
+   * 缓存未命中计数器
+   */
   private final long missCount;
+  /**
+   * 加载成功计数器
+   */
   private final long loadSuccessCount;
+  /**
+   * 加载失败计数器
+   */
   private final long loadFailureCount;
+  /**
+   * 总的加载耗时
+   */
   private final long totalLoadTime;
+  /**
+   * 条目被驱逐的计数器
+   */
   private final long evictionCount;
+  /**
+   * 条目被驱逐的权重
+   */
   private final long evictionWeight;
 
   private CacheStats(@NonNegative long hitCount, @NonNegative long missCount,
@@ -147,6 +170,7 @@ public final class CacheStats {
    * Returns the ratio of cache requests which were hits. This is defined as
    * {@code hitCount / requestCount}, or {@code 1.0} when {@code requestCount == 0}. Note that
    * {@code hitRate + missRate =~ 1.0}.
+   * 缓存命中比率
    *
    * @return the ratio of cache requests which were hits
    */
@@ -255,6 +279,7 @@ public final class CacheStats {
   /**
    * Returns the average number of nanoseconds spent loading new values. This is defined as
    * {@code totalLoadTime / (loadSuccessCount + loadFailureCount)}.
+   * 加载新值所花费的平均时间。
    * <p>
    * <b>Note:</b> the values of the metrics are undefined in case of overflow (though it is
    * guaranteed not to throw an exception). If you require specific handling, we recommend
@@ -270,6 +295,7 @@ public final class CacheStats {
   /**
    * Returns the number of times an entry has been evicted. This count does not include manual
    * {@linkplain Cache#invalidate invalidations}.
+   * 条目被逐出的次数。
    *
    * @return the number of times an entry has been evicted
    */
@@ -280,12 +306,15 @@ public final class CacheStats {
   /**
    * Returns the sum of weights of evicted entries. This total does not include manual
    * {@linkplain Cache#invalidate invalidations}.
+   * 已收回项的权重之和。
    *
    * @return the sum of weights of evicted entities
    */
   public @NonNegative long evictionWeight() {
     return evictionWeight;
   }
+
+  // 加减操作
 
   /**
    * Returns a new {@code CacheStats} representing the difference between this {@code CacheStats}
@@ -331,6 +360,7 @@ public final class CacheStats {
   /**
    * Returns the sum of {@code a} and {@code b} unless it would overflow or underflow in which case
    * {@code Long.MAX_VALUE} or {@code Long.MIN_VALUE} is returned, respectively.
+   * 返回a和b的和，除非它会上溢或下溢，在这种情况下分别返回Long.MAX_VALUE或Long.MIN_VALUE。
    */
   @SuppressWarnings("ShortCircuitBoolean")
   private static long saturatedAdd(long a, long b) {
@@ -343,6 +373,8 @@ public final class CacheStats {
     // we did over/under flow, if the sign is negative we should return MAX otherwise MIN
     return Long.MAX_VALUE + ((naiveSum >>> (Long.SIZE - 1)) ^ 1);
   }
+
+  // Object对象方法
 
   @Override
   public int hashCode() {
